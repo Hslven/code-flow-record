@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <title>知识测验</title>
+    <style>
+      .button {
+        margin: 5px;
+        padding: 10px;
+      }
+      .correct {
+        background-color: green;
+      }
+      .wrong {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="questionsContainer"></div>
+
+    <script>
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      // 动态创建问题和选项
+      function displayQuestions() {
+        const container = document.getElementById('questionsContainer'); // 假设有一个容器元素
+        questions.forEach((question, index) => {
+          const questionElem = document.createElement('div');
+          questionElem.innerHTML = `<h3>${question.title}</h3>`;
+
+          shuffleArray(question.options);
+
+          question.options.forEach((option) => {
+            const button = document.createElement('button');
+            button.innerText = option.text;
+            button.isCorrect = option.isCorrect;
+
+            button.markAsIncorrect = function () {
+              this.style.backgroundColor = 'red';
+            };
+            button.markAsCorrect = function () {
+              this.style.backgroundColor = 'green';
+            };
+            button.onclick = () => checkAnswer(option.isCorrect, button);
+
+            questionElem.appendChild(button);
+          });
+          container.appendChild(questionElem);
+        });
+      }
+      function checkAnswer(isCorrect, button) {
+        if (isCorrect) {
+          button.markAsCorrect();
+        } else {
+          button.markAsIncorrect();
+        }
+        // 遍历同级按钮
+        button.parentElement.querySelectorAll('button').forEach((btn) => {
+          btn.disabled = true;
+          if (btn.isCorrect) btn.markAsCorrect();
+        });
+      }
+
+      window.onload = displayQuestions;
+
+      // 题目数据
+      const questions = [
+        {
+          title: '问题1',
+          options: [
+            { text: '选项1', isCorrect: false },
+            { text: '选项2', isCorrect: true },
+            { text: '选项3', isCorrect: false },
+            { text: '选项4', isCorrect: false },
+            // 更多选项...
+          ],
+        },
+        {
+          title: '问题2',
+          options: [
+            { text: '选项A', isCorrect: true },
+            { text: '选项B', isCorrect: false },
+            // 更多选项...
+          ],
+        },
+      ];
+    </script>
+  </body>
+</html>
